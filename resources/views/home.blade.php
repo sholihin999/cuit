@@ -23,9 +23,11 @@
     </div>
     <!-- Textarea and Button -->
     <div class="bg-white p-6 rounded-xl shadow mb-8">
+      <form method="POST" action="{{ route('cuit.post') }}">
+        @csrf
       <textarea
-        class="w-full border border-gray-300 rounded-lg p-4 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-        rows="4"
+        class="w-full border border-gray-300 rounded-lg p-4 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" max="150"
+        rows="4" name="content" required
         placeholder="What's on your mind?"
       ></textarea>
       <div class="text-right mt-4">
@@ -37,14 +39,18 @@
 
     <!-- Post Cards -->
     <div class="space-y-6">
-
+      @forelse ($posts as $post)
       <!-- Example Post -->
       <div class="bg-white p-5 rounded-xl shadow">
-        <p class="text-gray-700">Just finished building a Tailwind CSS app and it looks amazing! 🚀</p>
-        <div class="text-sm text-gray-400 mt-2">Posted just now</div>
+        <p class="text-gray-700 text-xl">
+          {{ $post->content }}
+        </p>
+        <div class="text-sm text-gray-400 mt-2">
+          Posted by {{ $post->user->name }} - {{ $post->created_at->diffForHumans() }}
+        </div>
 
         <!-- Reply Button -->
-        <button onclick="toggleReply(this)" class="mt-4 text-blue-600 hover:underline text-sm">
+        <button onclick="toggleReply(this)" class="mt-4 text-blue-600 hover:under line text-sm">
           Reply
         </button>
 
@@ -62,41 +68,30 @@
           </div>
         </div>
       </div>
-
-      <!-- Another Post -->
-      <div class="bg-white p-5 rounded-xl shadow">
-        <p class="text-gray-700">Tailwind makes styling so much fun!</p>
-        <div class="text-sm text-gray-400 mt-2">Posted 10 mins ago</div>
-
-        <!-- Reply Button -->
-        <button onclick="toggleReply(this)" class="mt-4 text-blue-600 hover:underline text-sm">
-          Reply
-        </button>
-
-        <!-- Reply Section -->
-        <div class="mt-4 hidden">
-          <textarea
-            class="w-full border border-gray-300 rounded-lg p-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows="2"
-            placeholder="Write a reply..."
-          ></textarea>
-          <div class="text-right mt-2">
-            <button class="bg-green-600 text-white px-4 py-1 rounded-full hover:bg-green-700 transition">
-              Send
-            </button>
-          </div>
-        </div>
+      @empty
+      <div class="bg-white p-5 shadow text-center text-gray-600 rounded-xl">
+        Belum ada cuitan
       </div>
-
+      @endforelse
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- Script for toggling reply section -->
   <script>
     function toggleReply(button) {
       const replyBox = button.nextElementSibling;
       replyBox.classList.toggle("hidden");
     }
+
+    @if(session('success'))
+      Swal.fire({
+        title: 'Success!',
+        text: '{{ session('success') }}',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
+    @endif
   </script>
 
 </body>

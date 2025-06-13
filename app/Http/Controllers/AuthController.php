@@ -35,7 +35,7 @@ class AuthController extends Controller
             ])){
                 $User = User::where('email', $request->email)->first();
                 Auth::login($User);
-                return redirect('home');
+                return redirect('/');
     }
 
         return redirect('login')->with('error', 'Email or password is incorrect');
